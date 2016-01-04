@@ -4,7 +4,7 @@
 They are a higher-level representation of a computational task.
 While not ideally suited to every calculation they free the user from worrying
 about every detail of the process.
-Using **patrns** one writes *what* is supposed to happen, rather than *how* to
+Using **patrn**s one writes *what* is supposed to happen, rather than *how* to
 accomplish it.
 
 # Usage
@@ -44,6 +44,18 @@ built-in `cycle` function can be used for this.
 ```clojure
 (cycle [1 2 3])
 ```
+
+SuperCollider's `Pser` which cycles through the items in the list until repeats
+items have been output can be emulated by combining Clojure's `take` and
+`cycle` functions.
+```
+Pser([1, 2, 3], 4)
+```
+
+```clojure
+(take 4 (cycle [1 2 3]))
+```
+
 
 ### Arithmetic and geometric series
 
