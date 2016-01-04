@@ -29,11 +29,6 @@
        inside-out
        (take-while not-any-nil-vals?)))
 
-(defn inst-param-names 
-  "Extracts list of paramater names from Overtone instrument."
-  [inst] (map (comp keyword :name) (:params inst)))
-
-
 (def rep-cat 
   "Repeats pattern n times."
   (comp (partial apply concat) repeat))
