@@ -14,7 +14,9 @@ functions in its core library.
 
 ## Analogs
 
-### Pseries -> range
+### List patterns
+
+#### Pseries -> range
 
 SuperCollider:
 ```
@@ -26,7 +28,7 @@ Clojure:
 (range start end step)
 ```
 
-### Pseq([1, 2, 3]) -> []
+#### Pseq([1, 2, 3]) -> []
 
 SuperCollider:
 ```
@@ -37,6 +39,26 @@ Clojure:
 ```clojure
 [1 2 3]
 ```
+
+`Pseq` allows a number of repetitions to be specified for the sequence of
+values. This can be achieved with `p/rep-cat` (a simple composition of `concat`
+and `repeat`). 
+i.e. in SuperCollider, repeating the sequence `[1 2 3]` three times can be
+achieved as follows:
+```
+Pseq([1, 2, 3], 3)
+```
+A similar result can be achieved with patrn's `rep-cat`.
+```clojure
+(p/rep-cat 3 [1 2 3])
+```
+
+It's a slightly different procedure to create an infinite sequence, Clojure's
+built-in `cycle` function can be used for this.
+```clojure
+(cycle [1 2 3])
+```
+
 
 ## How to run the tests
 
