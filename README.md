@@ -1,15 +1,46 @@
 # patrn
 
-**patrns** describe calculations without stating every step.
+**patrn**s describe calculations without stating every step.
 They are a higher-level representation of a computational task.
 While not ideally suited to every calculation they free the user from worrying
 about every detail of the process.
 Using **patrns** one writes *what* is supposed to happen, rather than *how* to
 accomplish it.
 
-The project uses [Midje](https://github.com/marick/Midje/).
+# Usage
+
+Clojure provides analogs to many of SuperCollider's pattern definition
+functions in its core library.
+
+## Analogs
+
+### Pseries -> range
+
+SuperCollider:
+```
+Pseries(start, step, length)
+```
+
+Clojure:
+```
+(range start end step)
+```
+
+### Pseq([1, 2, 3]) -> []
+
+SuperCollider:
+```
+Pseq([1, 2, 3])
+```
+
+Clojure:
+```
+[1 2 3]
+```
 
 ## How to run the tests
+
+The project uses [Midje](https://github.com/marick/Midje/) for testing.
 
 `lein midje` will run all tests.
 
