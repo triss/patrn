@@ -14,21 +14,7 @@ functions in its core library.
 
 ## Analogs
 
-### List patterns
-
-#### Pseries -> range
-
-SuperCollider:
-```
-Pseries(start, step, length)
-```
-
-Clojure:
-```clojure
-(range start end step)
-```
-
-#### Pseq([1, 2, 3]) -> []
+#### List patterns
 
 SuperCollider:
 ```
@@ -57,6 +43,20 @@ It's a slightly different procedure to create an infinite sequence, Clojure's
 built-in `cycle` function can be used for this.
 ```clojure
 (cycle [1 2 3])
+```
+
+### Arithmetic and geometric series
+
+#### Pseries -> range
+
+SuperCollider:
+```
+Pseries(start, step, length)
+```
+
+Clojure:
+```clojure
+(range start end step)
 ```
 
 
