@@ -22,7 +22,7 @@ Pseries(start, step, length)
 ```
 
 Clojure:
-```
+```clojure
 (range start end step)
 ```
 
@@ -34,7 +34,7 @@ Pseq([1, 2, 3])
 ```
 
 Clojure:
-```
+```clojure
 [1 2 3]
 ```
 
