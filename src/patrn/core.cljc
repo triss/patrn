@@ -29,7 +29,8 @@
        inside-out
        (take-while not-any-nil-vals?)))
 
-(def rep-cat 
+
+(def repeatcat 
   "Repeats pattern n times."
   (comp (partial apply concat) repeat))
 

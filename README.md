@@ -34,9 +34,9 @@ achieved as follows:
 ```
 Pseq([1, 2, 3], 3)
 ```
-A similar result can be achieved with patrn's `rep-cat`.
+A similar result can be achieved with patrn's `repeatcat`.
 ```clojure
-(p/rep-cat 3 [1 2 3])
+(p/repeatcat 3 [1 2 3])
 ```
 
 It's a slightly different procedure to create an infinite sequence, Clojure's
