@@ -23,11 +23,13 @@
 
 (defn bind 
   "bind combines several value streams in to one event stream."
-  [pattern]
-  (->> pattern
-       (map-vals repeat-if-nonsequential)
-       inside-out
-       (take-while not-any-nil-vals?)))
+  ([pattern] 
+   (bind event/default-event pattern))
+  ([base-event pattern]
+   (->> (merge base-event pattern)
+        (map-vals repeat-if-nonsequential)
+        inside-out
+        (take-while not-any-nil-vals?))))
 
 
 (def repeatcat 
