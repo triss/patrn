@@ -20,6 +20,8 @@ functions in its core library.
 
 #### List patterns
 
+**patrn** enables list patterns to be specified as vectors.
+
 SuperCollider:
 ```
 Pseq([1, 2, 3])
@@ -31,16 +33,16 @@ Clojure:
 ```
 
 `Pseq` allows a number of repetitions to be specified for the sequence of
-values. This can be achieved with `p/rep-cat` (a simple composition of `concat`
-and `repeat`). 
+values. This can be achieved with composition of `concat` and `repeat`. 
 i.e. in SuperCollider, repeating the sequence `[1 2 3]` three times can be
 achieved as follows:
 ```
 Pseq([1, 2, 3], 3)
 ```
-A similar result can be achieved with patrn's `repeatcat`.
+A similar result can be achieved in Clojure through the use of `apply`, `concat`
+and `repeat`.
 ```clojure
-(p/repeatcat 3 [1 2 3])
+(apply concat (repeat 3 [1 2 3]))
 ```
 
 It's a slightly different procedure to create an infinite sequence, Clojure's
