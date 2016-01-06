@@ -26,7 +26,7 @@
   ([pattern] 
    (bind event/default-event pattern))
   ([base-event pattern]
-   (->> (merge base-event pattern)
+   (->> (merge base-event (ordered-map pattern))
         (map-vals repeat-if-nonsequential)
         inside-out
         (take-while not-any-nil-vals?))))

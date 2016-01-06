@@ -17,34 +17,13 @@
 
 (defn play
   "Play back a pattern binding."
-  [[{:keys [duration] :or {duration 1} :as e} & rst] metro t]
-  (at (metro t) (play-event e))
+  [[{:keys [duration gate length] 
+     :or {duration 1 length 1} :as e} & rst] metro t]
+  (at (metro t) 
+      (let [synth (play-event e)]
+        (when gate
+          (at (metro (+ t length))
+              (ctl synth :gate 0)))))
   (when rst 
     (let [next-time (+ t duration)] 
       (apply-by (metro next-time) play [rst metro next-time]))))
-
-(comment
-  (connect-external-server "192.168.0.10" 57110)
-
-  (definst smooth 
-    [freq 440 amp 0.5 length 1]
-    (* (sin-osc freq) 
-       (env-gen (perc 0.01 length amp) 1 1 0 FREE)))
-  
-  (smooth 991 0.2 9.2)
-
-  (def m (metronome 128))
-
-  (def e (merge event/default-event {:octave 4 :degree 1 :instrument smooth}))
-
-  (def pattern (p/bind (merge event/default-event 
-                              {:instrument smooth
-                               :duration (cycle (map #(/ % 6) [2 2 3]))
-                               :degree   [1 2 3 6 5 4 9 8 7]
-                               :octave   (cycle [4 5 6 5])})))
-
-  (play pattern m (m))
-
-  (play-event e)
-
-  )
