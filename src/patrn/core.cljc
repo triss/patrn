@@ -2,12 +2,26 @@
   (:require [flatland.ordered.map :refer [ordered-map]]
             [patrn.event :as event]))
 
+;;;; Functions that allow us to treat all values as sequences/streams.
+
+(defn cycle-or-repeat
+  "Repeat item if non-sequential, cycle it otherwise."
+  [v] (if (sequential? v) (cycle v) (repeat v)))
+
 (defn repeat-if-nonsequential 
   "Repeat item if its not sequential."
-  [item] 
-  (if-not (sequential? item)
-    (repeat item)
-    item))
+  [v] (if (sequential? v) v (repeat v))) 
+
+(defn stream 
+  [coll]
+  (lazy-seq
+    (when-let [[x & more] (seq coll)] 
+      (cond 
+        (fn? x)         (stream (cons (x) more))
+        (sequential? x) (concat (stream x) (stream more))
+        :else           (cons x (stream more))))))
+
+;;;; Map manipulation
 
 (defn map-vals
   "map over values in map."
@@ -21,23 +35,21 @@
   "True when m doesn't contain any nil values."
   [m] (not-any? nil? (vals m)))
 
+;;;; Event sequence creation
+
+(defn- assoc-merge 
+  "Merges map b in to ordered maps without losing order of a."
+  [a b] (reduce (partial apply assoc) a b))
+
 (defn bind 
   "bind combines several value streams in to one event stream."
   ([pattern] 
    (bind event/default-event pattern))
   ([base-event pattern]
-   (->> (merge base-event (ordered-map pattern))
+   (->> (assoc-merge base-event pattern)
         (map-vals repeat-if-nonsequential)
         inside-out
         (take-while not-any-nil-vals?))))
 
-
-(def repeatcat 
-  "Repeats pattern n times."
-  (comp (partial apply concat) repeat))
-
 (defn rotate 
-  [n coll]
-  (concat (drop n coll) (take n coll)))
-
-(rotate 1 [1 2 3])
+  [n coll] (concat (drop n coll) (take n coll)))
