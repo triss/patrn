@@ -27,13 +27,8 @@
     [v] (if (sequential? v) (count v) 1)) 
 
   (defn longest-val-length
-    [m] (apply max (map val-length (vals m))))
-
-  (defn cycle-or-repeat
-    [v] (if (sequential? v) (cycle v) (repeat v)))
-
-  (defn cycle-vals
-    [m] (p/map-vals (comp (partial take (longest-val-length m)) cycle-or-repeat) m))
+    [m] (apply max (map val-length (vals m)))) (defn cycle-vals
+                                                 [m] (p/map-vals (comp (partial take (longest-val-length m)) cycle-or-repeat) m))
 
   (def bicycle (comp p/bind cycle-vals))
 
@@ -47,32 +42,23 @@
   (play pattern m (m))
 
   (def a (p/bind (pn (cycle-vals {:degree   [0   0   4   4   5   5   4 3 4 5 6 7 8]
-                                 :duration [1/2 1/2 1/2 1/2 1/2 1/2 1]}))))
+                                  :duration [1/2 1/2 1/2 1/2 1/2 1/2 1]}))))
 
   (play a m (m))
 
   ;; get patterns length
   (reduce + (map :duration pattern))
 
-  (defn window
-    [start length coll]
-    (->> (drop start coll)
-         (take length)))
-
-  (defn windows 
-    [length step start coll]
-    (map #(window % length coll) 
-         (range start (count coll) step)))
-
   (defn slide 
-    [repeats & args]
-    (->> (apply windows args)
+    [repeats len step start coll]
+    (->> (drop start coll)
+         (partition-all len step)
          (take repeats)
          (apply concat)))
 
   (def a-flock-of-sea-gulls 
     (p/bind {:instrument smooth
-             :degree     (slide 8 3 1 0 (range -6 12 2))
+             :degree     (take 8 (partition-all 3 1 (range -6 12 2)))
              :duration   (cycle [0.1 0.1 0.2])
              :length     0.45}))
 
