@@ -4,7 +4,7 @@
             [patrn.overtone :refer [play]])
   (:use [overtone.core]))
 
-(defn p [x] (pprint x) x)
+(defn pn [x] (pprint x) x)
 
 (comment
   (connect-external-server "192.168.0.10" 57110)
@@ -14,38 +14,61 @@
     (* (sin-osc freq) 
        (env-gen (perc 0.01 length amp) 1 1 0 FREE)))
 
-  (do (smooth 995 0.2 1.2)
-      (smooth 993 0.05 1.9)
-      (smooth 991 0.1 1))
+  (let [freqs (range 991 10000 5)] 
+    (doseq [x (range 32) :let [freq (nth x freqs)]]
+      (smooth freq (/ 1 x) (inc (rand)))))
 
   (def m (metronome 128))
 
+  (defn sixteenths 
+    [coll] (map #(/ % 4) coll))
+
+  (defn val-length 
+    [v] (if (sequential? v) (count v) 1)) 
+
+  (defn longest-val-length
+    [m] (apply max (map val-length (vals m))))
+
+  (defn cycle-or-repeat
+    [v] (if (sequential? v) (cycle v) (repeat v)))
+
+  (defn cycle-vals
+    [m] (p/map-vals (comp (partial take (longest-val-length m)) cycle-or-repeat) m))
+
+  (def bicycle (comp p/bind cycle-vals))
+
   (def pattern 
-    (p/bind {:instrument smooth
-             :amp      (cycle [1/2 1/3 1/4 1/8])
-             :duration (cycle (map #(/ % 4) [2 3 3]))
-             :degree   (shuffle (range 1 12))
-             :octave   (cycle [4 5 6 5])}))
+    (bicycle {:amp      [1/2 1/3 1/4 1/8]
+              :duration (sixteenths [2 3 3])
+              :degree   (shuffle (range 1 12))
+              :octave   [4 5 6 5]}))
 
   (p pattern)
   (play pattern m (m))
 
-  (def p (p/bind {:instrument smooth
-                  :degree   [0 0 4 4 5 5 4]
-                  :duration [1/2 1/2 1/2 1/2 1/2 1/2 1]}))
+  (def a (p/bind (pn (cycle-vals {:degree   [0   0   4   4   5   5   4 3 4 5 6 7 8]
+                                 :duration [1/2 1/2 1/2 1/2 1/2 1/2 1]}))))
 
-  (play p m (m))
+  (play a m (m))
 
   ;; get patterns length
   (reduce + (map :duration pattern))
 
-  (defn slide 
-    [repeats seg-length seg-step start coll]
-    let [get-segment #(->> coll (drop %) (take seg-length))] 
-    (->> (range start (count coll) seg-step)  ; the start pos of each segment
-         (map get-segment)                    ; fetch each segment
-         (apply concat)))                     ; and join them together
+  (defn window
+    [start length coll]
+    (->> (drop start coll)
+         (take length)))
 
+  (defn windows 
+    [length step start coll]
+    (map #(window % length coll) 
+         (range start (count coll) step)))
+
+  (defn slide 
+    [repeats & args]
+    (->> (apply windows args)
+         (take repeats)
+         (apply concat)))
 
   (def a-flock-of-sea-gulls 
     (p/bind {:instrument smooth
