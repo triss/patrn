@@ -1,15 +1,12 @@
 # patrn
 
-**patrn** aims to provide the same functionality as that of SuperCollider's
-Pattern system in Clojure whilst requiring the programmer to learn as little as
-possible library specific vocabulary. 
+**patrn** aims to bring the functionality of SuperCollider's Pattern system to
+Clojure whilst requiring the programmer to learn as little as possible library
+specific vocabulary. 
 
-**patrns** describe calculations without stating every step.
-They are a higher-level representation of a computational task.
-While not ideally suited to every calculation they free the user from worrying
-about every detail of the process.
-Using **patrns** one writes *what* is supposed to happen, rather than *how* to
-accomplish it.
+Clojure provides a great many functions for the manipulation of sequences of
+values and **patrn** encourages the user to leverage their power where
+possible.
 
 # Usage
 
