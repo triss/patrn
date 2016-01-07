@@ -1,6 +1,6 @@
 # patrn
 
-**patrn** aims to bring the functionality of SuperCollider's Pattern system to
+**patrn** aims to bring the functionality of SuperCollider's [Pattern][1] system to
 Clojure whilst requiring the programmer to learn as little as possible library
 specific vocabulary. 
 
@@ -10,10 +10,36 @@ possible.
 
 # Usage
 
-Clojure provides analogues to many of SuperCollider's pattern definition
-functions in its core library.
+## Getting started with patrn and Overtone
+
+Create a new Clojure project with `lein`:
+```
+lein new plinky-plonky
+```
+Add the following to your `project.clj` `:dependancies`:
+```
+[overtone "0.9.1"]
+[patrn "0.0.1-SNAPSHOT]
+```
+And plop something this in your `src/plinky_plonkey/core.clj` file:
+```clojure
+(ns plinky-plonky.core
+  (:require [patrn.core :as p]
+	    [patrn.overtone :refer [play])
+  (:use [overtone.live]))
+
+(def a-flock-of-sea-gulls 
+  (p/bind :degree   (take 8 (partition-all 3 1 (range -6 12 2)))
+	  :duration [0.2 0.2 0.1]
+	  :length   0.45))
+
+(play a-flock-of-sea-gulls)
+```
 
 ## Analogues
+
+Clojure provides analogues to many of SuperCollider's pattern definition
+functions in its core library.
 
 #### List patterns
 
@@ -35,7 +61,7 @@ achieved as follows:
 ```
 Pseq([1, 2, 3], 3)
 ```
-A similar result can be achieved in Clojure through the use of 'repeat`.
+A similar result can be achieved in Clojure through the use of `repeat`.
 ```clojure
 (repeat 3 [1 2 3]))
 ```
