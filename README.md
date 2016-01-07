@@ -12,12 +12,12 @@ possible.
 
 ## Getting started with patrn and Overtone
 
-Create a new Clojure project with `lein`:
+Create a new Clojure project at the command line with `lein`:
 ```
 lein new plinky-plonky
 ```
 Add the following to your `project.clj` `:dependancies`:
-```
+```clojure
 [overtone "0.9.1"]
 [patrn "0.0.1-SNAPSHOT]
 ```
