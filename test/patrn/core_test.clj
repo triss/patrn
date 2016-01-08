@@ -29,8 +29,8 @@
 
 (facts "about `stream`"
        (fact "does nothing to sequence of literals."
-             (stream [1 2 3])     => '(1 2 3))
+             (stream [1 2 3])        => '(1 2 3))
        (fact "flattens nested sequences/vectors."
-             (stream [1 [2 [3]]]) => '(1 2 3))
+             (stream [1 [2 [3]]])    => '(1 2 3))
        (fact "embeds function results."
              (stream [1 #(inc 1) 3]) => '(1 2 3)))

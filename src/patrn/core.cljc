@@ -43,13 +43,11 @@
 
 (defn bind 
   "bind combines several value streams in to one event stream."
-  ([pattern] 
-   (bind event/default-event pattern))
-  ([base-event pattern]
-   (->> (assoc-merge base-event pattern)
-        (map-vals repeat-if-nonsequential)
-        inside-out
-        (take-while not-any-nil-vals?))))
+  [pattern]
+  (->> pattern
+       (map-vals (comp stream repeat-if-nonsequential))
+       inside-out
+       (take-while not-any-nil-vals?)))
 
 (defn rotate 
   [n coll] (concat (drop n coll) (take n coll)))
