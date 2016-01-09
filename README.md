@@ -31,7 +31,7 @@ And plop something this in your `src/plinky_plonkey/core.clj` file:
 (def a-flock-of-sea-gulls 
   (p/bind :degree   (take 8 (partition-all 3 1 (range -6 12 2)))
           :duration (repeat [0.2 0.2 0.1])
-	  :length   (repeat 0.45)))
+          :length   (repeat 0.45)))
 
 (play a-flock-of-sea-gulls)
 ```
