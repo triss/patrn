@@ -58,17 +58,12 @@
        flop-map
        (take-while not-any-nil-vals?)))
 
-;;;; bicycle support fns
-
-(defn- patrn-length 
-  [v] (if (sequential? v) (count (patrn v)) 1)) 
-
-(defn- longest-patrn-length
-  [m] (apply max (map patrn-length (vals m)))) 
+;;;; bicycle 
 
 (defn- cycle-vals-and-take-for-longest
-  [m] (let [longest (longest-patrn-length m)] 
-                (map-vals #(take longest (cycle-or-repeat %)) m)))
+  [m] (letfn [patrn-length ([v] (if (sequential? v) (count (patrn v)) 1))
+              longest-patrn-len ([m] (apply max (map patrn-length (vals m))))] 
+        (map-vals #(take (longest-patrn-len m)(cycle-or-repeat %)) m)))
 
 (def bicycle (comp bind cycle-vals-and-take-for-longest))
 
