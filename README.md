@@ -41,48 +41,14 @@ And plop something this in your `src/plinky_plonkey/core.clj` file:
 Clojure provides analogues to many of SuperCollider's pattern definition
 functions in its core library.
 
+SuperCollider        | Clojure & patrn         | Result
+------------------   | ----------------------- | ------------------------------
+Pseq([1, 2, 3])      | [1 2 3]                 | [1 2 3]  
+Pseq([1, 2, 3], 4)   | (repeat 4 [1 2 3])      | [1 2 3 1 2 3 1 2 3 1 2 3]
+Pseq([1, 2, 3], inf) | (cycle [1 2 3])         | [1 2 3 1 2 3 1 2 3 ...
+Pser([1, 2, 3], 4)   | (take 4 (cycle [1 2 3]) | [1 2 3 1]
+
 #### List patterns
-
-In SuperCollider list patterns are specified as follows:
-```
-Pseq([1, 2, 3])
-```
-
-**patrn** enables list patterns to be specified as vectors.
-Clojure:
-```clojure
-[1 2 3]
-```
-
-`Pseq` allows a number of repetitions to be specified for a sequence of values.
-This can be achieved with Clojure's built-in `repeat` function. 
-i.e. in SuperCollider repeating the sequence `[1 2 3]` three times can be
-achieved as follows:
-```
-Pseq([1, 2, 3], 3)
-```
-A similar result can be achieved in Clojure through the use of `repeat`.
-```clojure
-(repeat 3 [1 2 3]))
-```
-
-It's a slightly different procedure to create an infinite sequence, Clojure's
-built-in `cycle` function can be used for this.
-```clojure
-(cycle [1 2 3])
-```
-
-SuperCollider's `Pser` which cycles through the items in the list until repeats
-items have been output can be emulated by combining Clojure's `take` and
-`cycle` functions.
-```
-Pser([1, 2, 3], 4)
-```
-
-```clojure
-(take 4 (cycle [1 2 3]))
-```
-
 
 ### Arithmetic and geometric series
 
