@@ -41,12 +41,12 @@ And plop something this in your `src/plinky_plonkey/core.clj` file:
 Clojure provides analogues to many of SuperCollider's pattern definition
 functions in its core library.
 
-SuperCollider        | Clojure & patrn         | Result
-------------------   | ----------------------- | ------------------------------
-Pseq([1, 2, 3])      | [1 2 3]                 | [1 2 3]  
-Pseq([1, 2, 3], 4)   | (repeat 4 [1 2 3])      | [1 2 3 1 2 3 1 2 3 1 2 3]
-Pseq([1, 2, 3], inf) | (cycle [1 2 3])         | [1 2 3 1 2 3 1 2 3 ...
-Pser([1, 2, 3], 4)   | (take 4 (cycle [1 2 3]) | [1 2 3 1]
+SuperCollider          | Clojure & patrn            | Result
+------------------     | -----------------------    | --------------------------
+`Pseq([1, 2, 3])`      | `[1 2 3]`                  | `[1 2 3]`  
+`Pseq([1, 2, 3], 4)`   | `(repeat 4 [1 2 3])`       | `[1 2 3 1 2 3 1 2 3 1 2 3]`
+`Pseq([1, 2, 3], inf)` | `(cycle [1 2 3])`          | `[1 2 3 1 2 3 1 2 3 ...`
+`Pser([1, 2, 3], 4)`   | `(take 4 (cycle [1 2 3]))` | `[1 2 3 1]`
 
 #### List patterns
 
