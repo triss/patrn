@@ -10,18 +10,19 @@ possible.
 
 # Usage
 
-## Getting started with patrn and Overtone
+## Getting started 
 
+### Playing back a patrn with Overtone
 Create a new Clojure project at the command line with `lein`:
 ```
 lein new plinky-plonky
 ```
-Add the following to your `project.clj` `:dependancies`:
+Add the following to `:dependancies` vector in `plinky-plonky/project.clj`:
 ```clojure
 [overtone "0.9.1"]
 [patrn "0.0.1-SNAPSHOT]
 ```
-And plop something this in your `src/plinky_plonkey/core.clj` file:
+And plop something this in your `src/plinky_plonky/core.clj` file:
 ```clojure
 (ns plinky-plonky.core
   (:require [patrn.core :as p]
@@ -35,22 +36,25 @@ And plop something this in your `src/plinky_plonkey/core.clj` file:
 
 (play a-flock-of-sea-gulls)
 ```
+And run the expressions.
 
 ## Analogues
 
+**patrn**'s `patrn->seq` function and Clojure's core library do away with the need
+for a large vocabulary of sequence generating functions as provided by
+SuperCollider's Pattern classes.
 Clojure provides analogues to many of SuperCollider's pattern definition
 functions in its core library.
 
-SuperCollider          | Clojure & patrn            | Result
-------------------     | -----------------------    | --------------------------
-`Pseq([1, 2, 3])`      | `[1 2 3]`                  | `[1 2 3]`  
-`Pseq([1, 2, 3], 4)`   | `(repeat 4 [1 2 3])`       | `[1 2 3 1 2 3 1 2 3 1 2 3]`
-`Pseq([1, 2, 3], inf)` | `(cycle [1 2 3])`          | `[1 2 3 1 2 3 1 2 3 ...`
-`Pser([1, 2, 3], 4)`   | `(take 4 (cycle [1 2 3]))` | `[1 2 3 1]`
-
-#### List patterns
-
-### Arithmetic and geometric series
+SuperCollider                    | Clojure & patrn                                 | `patrn->seq`
+------------------               | -----------------------                         | --------------------------
+`Pseq([1, 2, 3])`                | `[1 2 3]`                                       | `'(1 2 3)`  
+`Pseq([1, 2, 3], 4)`             | `(repeat 4 [1 2 3])`                            | `'(1 2 3 1 2 3 1 2 3 1 2 3)`
+`Pseq([1, 2, 3], inf)`           | `(cycle [1 2 3])`                               | `'(1 2 3 1 2 3 1 2 3 ...`
+`Pser([1, 2, 3], 4)`             | `(take 4 (cycle [1 2 3]))`                      | `'(1 2 3 1)`
+`Pseries(1, 3, 9)`               | `(take 9 (range 9 100 3))`                      | `'(1 4 7 10 13 16 19 22 25 28)``
+`(-6,2..12)` 			 | `(range -6 12 2)`			 	   | `'(-6 -4 -2 0 2 4 6 8 10 12)`
+`Pslide((-6,2..12), 8, 3, 1, 0)` | `(take 8 (partition-all 3 1 (range -16 12 2)))` | `'(-6 -4 -2 -4 -2 0 -2 0 2...)`
 
 #### Pseries -> range
 
