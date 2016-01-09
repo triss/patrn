@@ -25,7 +25,7 @@ And plop something this in your `src/plinky_plonkey/core.clj` file:
 ```clojure
 (ns plinky-plonky.core
   (:require [patrn.core :as p]
-	    [patrn.overtone :refer [play])
+            [patrn.overtone :refer [play])
   (:use [overtone.live]))
 
 (def a-flock-of-sea-gulls 
