@@ -63,7 +63,7 @@
 (defn- cycle-vals-and-take-for-longest
   [m] (letfn [patrn-length ([v] (if (sequential? v) (count (patrn v)) 1))
               longest-patrn-len ([m] (apply max (map patrn-length (vals m))))] 
-        (map-vals #(take (longest-patrn-len m)(cycle-or-repeat %)) m)))
+        (map-vals #(take (longest-patrn-len m) (cycle-or-repeat %)) m)))
 
 (def bicycle (comp bind cycle-vals-and-take-for-longest))
 
