@@ -2,38 +2,17 @@
   (:use midje.sweet)
   (:use [patrn.core]))
 
-(facts "about `zero-arity-fn?`"
-       (fact "true when f has arity of 0."
-             (zero-arity-fn? #(inc 10))  => true
-             (zero-arity-fn? (fn [] 20)) => true)
-       (fact "false when f has arity > 0."
-             (zero-arity-fn? #(inc %))   => false
-             (zero-arity-fn? #(+ %1 %2)) => false))
-
-(facts "about `repeat-if-nonsequential`"
-       (fact "every output is sequential."
-             (sequential? (repeat-if-nonsequential 10))      => truthy
-             (sequential? (repeat-if-nonsequential [1 2 3])) => truthy))
-
-(def m {:a 1 :b 2 :c 3})
-
-(facts "about `map-vals`"
-       (fact "output has same keys as input map."
-             (keys m) => (keys (map-vals inc m))))
+(def map-of-seqs {:a [1 2 3] :b [1 2 3] :c [1 2 3]})
+(def map-of-seqs-a-short {:a [1 2] :b [1 2 3] :c [1 2 3]})
 
 (facts "about `flop-map`"
        (fact "output is always sequential."
-             ;(take-while not-any-nil-vals? (inside-out (map-vals repeat-if-nonsequential m))) => sequential?
-))
-
-(facts "about `not-any-nil-vals?`"
-       (fact "true when map contains no nil values."
-             (not-any-nil-vals? m)        => truthy)
-       (fact "false when map contains nil values."
-             (not-any-nil-vals? {:a nil}) => falsey))
-
-;(facts "about `bind`"
-;  (facts "bound patterns have no nil values."))
+             (flop-map map-of-seqs)             => sequential?)
+       (fact "contains same number of items as shortest seq."
+             (count (flop-map map-of-seqs))         => 3
+             (count (flop-map map-of-seqs-a-short)) => 2)
+       (fact "first out contains first values of sequences."
+             (first (flop-map map-of-seqs))     => {:a 1 :b 1 :c 1}))
 
 (facts "about `patrn->seq`"
        (fact "does nothing to sequence of atomic values."

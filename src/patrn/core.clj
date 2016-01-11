@@ -1,15 +1,5 @@
 (ns patrn.core
-  (:require [flatland.ordered.map :refer [ordered-map]]
-            [patrn.event :as event]))
-
-(defn fn-arity  
-  "Arity of function f."
-  [f] ^{:pre [(instance? clojure.lang.AFunction f)]}
-  (-> f class .getDeclaredMethods first .getParameterTypes alength))
-
-(defn zero-arity-fn? 
-  "True when f is a zero arity function, false otherwise."
-  [f] (zero? (fn-arity f)))
+  (:require [patrn.helper :refer [fn-arity]]))
 
 (defn patrn->seq
   "Converts a patrn to a sequence of values.
@@ -17,55 +7,30 @@
   which case it's value is resolved and then flattened in to the sequence just
   like any other."
   [coll]
-  (lazy-seq
-    (when-let [[x & more] (seq coll)] 
-      (cond 
-        (zero-arity-fn? x) (patrn->seq (cons (x) more))
-        (sequential? x)    (concat (patrn->seq x) (patrn->seq more))
-        :else              (cons x (patrn->seq more))))))
-
-;;;; Functions that allow us to treat all values as sequences/streams.
-
-(defn cycle-or-repeat
-  "Repeat item if non-sequential, cycle it otherwise."
-  [v] (if (sequential? v) (cycle v) (repeat v)))
-
-(defn repeat-if-nonsequential 
-  "Repeat item if its not sequential otherwise return it unmodified."
-  [v] (if (sequential? v) v (repeat v))) 
-
-;;;; Map manipulation
-
-(defn map-vals
-  "Map over values in m."
-  [f m] (zipmap (keys m) (map f (vals m))))
+  (lazy-seq 
+   (when-let [[x & more] (seq coll)] 
+     (cond 
+       (= 0 (fn-arity x)) (patrn->seq (cons (x) more))
+       (sequential? x)    (concat (patrn->seq x) (patrn->seq more))
+       :else              (cons x (patrn->seq more))))))
 
 (defn flop-map 
   "Turns a map of sequences in to a sequence of maps."
-  [m] (cons (map-vals first m) (lazy-seq (flop-map (map-vals rest m)))))
-
-(defn not-any-nil-vals? 
-  "True when m doesn't contain any nil values."
-  [m] (not-any? nil? (vals m)))
-
-;;;; Event sequence creation
+  [m] (lazy-seq 
+       (let [mapm #(zipmap (keys m) (map % (vals m)))] 
+         (when (every? seq (vals m)) 
+           (cons (mapm first) (flop-map (mapm rest)))))))
 
 (defn bind 
-  "Combines several value patrns in to one event sequence."
-  [pattern]
-  (->> pattern
-       (map-vals (comp patrn repeat-if-nonsequential))
-       flop-map
-       (take-while not-any-nil-vals?)))
+  "Combines map of patrns in to one sequence of maps."
+  [bindings]
+  (->> (vals bindings)
+       (map #(if (sequential? %) % (repeat %)))
+       (map patrn->seq)
+       (zipmap (keys bindings))
+       flop-map))
 
-;;;; bicycle 
-
-(defn- cycle-vals-and-take-for-longest
-  [m] (letfn [patrn-length ([v] (if (sequential? v) (count (patrn v)) 1))
-              longest-patrn-len ([m] (apply max (map patrn-length (vals m))))] 
-        (map-vals #(take (longest-patrn-len m) (cycle-or-repeat %)) m)))
-
-(def bicycle (comp bind cycle-vals-and-take-for-longest))
+(def bicycle (comp bind #(zipmap (keys %) (map cycle (vals %)))))
 
 ;;;; helper patterns
 
