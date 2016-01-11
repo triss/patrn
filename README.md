@@ -1,12 +1,18 @@
-# patrn
+# patrn 
+**patrn** brings the declarative functionality of [SuperCollider's
+Pattern][sc-pattern] system to Clojure whilst requiring the programmer to
+learn as little as possible library specific vocabulary. 
 
-**patrn** aims to bring the functionality of SuperCollider's [Pattern][1] system to
-Clojure whilst requiring the programmer to learn as little as possible library
-specific vocabulary. 
+## Philosphy
 
-Clojure provides a great many functions for the manipulation of sequences of
-values and **patrn** encourages the user to leverage their power where
-possible.
+**Simple** - pattern/event definition and playback decomplected.
+
+**Easy** - get started quickly when using Overtone, Pink, MIDI, or OSC messages to render output.
+
+**Declarative** - say *what* will occur not *how* it will happen.
+
+Clojure provides a great many functions for the manipulation of sequences and
+**patrn** encourages the user to leverage their power where possible.
 
 # Usage
 
@@ -38,7 +44,7 @@ And plop something this in your `src/plinky_plonky/core.clj` file:
 ```
 And run the expressions.
 
-## Analogues
+## SuperCollider -> patrn Analogues
 
 **patrn**'s `patrn->seq` function and Clojure's core library do away with the need
 for a large vocabulary of sequence generating functions as provided by
@@ -56,27 +62,12 @@ SuperCollider                    | Clojure & patrn                              
 `(-6,2..12)` 			 | `(range -6 12 2)`			 	   | `'(-6 -4 -2 0 2 4 6 8 10 12)`
 `Pslide((-6,2..12), 8, 3, 1, 0)` | `(take 8 (partition-all 3 1 (range -16 12 2)))` | `'(-6 -4 -2 -4 -2 0 -2 0 2...)`
 
-#### Pseries -> range
-
-SuperCollider:
-```
-Pseries(start, step, length)
-```
-
-Clojure:
-```clojure
-(range start end step)
-```
-
 
 ## How to run the tests
 
-The project uses [Midje](https://github.com/marick/Midje/) for testing.
+The project uses [Midje][midje] for testing. `lein midje` will run all tests.
 
-`lein midje` will run all tests.
+[sc-pattern]: http://doc.sccode.org/Tutorials/A-Practical-Guide/PG_01_Introduction.html 
+[midje]: https://github.com/marick/Midje/
+[flatten]: https://mwfogleman.github.io/posts/20-12-2014-flatcat.html "A few implementations of flatten"
 
-`lein midje namespace.*` will run only tests beginning with "namespace.".
-
-`lein midje :autotest` will run all the tests indefinitely. It sets up a
-watcher on the code files. If they change, only the relevant tests will be
-run again.
