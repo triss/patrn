@@ -5,11 +5,16 @@ learn as little as possible library specific vocabulary.
 
 ## Philosphy
 
+**Declarative** - say *what* will occur not *how* it will happen.
+
+**Idiomatic** - Use's Clojure's Lazy Sequences to represent streams of values
+and encourages use of core libraries sequence manipulation functions rather
+than presenting more vocabulary to the user.
+
 **Simple** - pattern/event definition and playback decomplected.
 
 **Easy** - get started quickly when using Overtone, Pink, MIDI, or OSC messages to render output.
 
-**Declarative** - say *what* will occur not *how* it will happen.
 
 Clojure provides a great many functions for the manipulation of sequences and
 **patrn** encourages the user to leverage their power where possible.
