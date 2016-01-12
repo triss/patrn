@@ -7,14 +7,15 @@ learn as little as possible library specific vocabulary.
 
 **Declarative** - say *what* will occur not *how* it will happen.
 
-**Idiomatic** - Use's Clojure's Lazy Sequences to represent streams of values
-and encourages use of core libraries sequence manipulation functions rather
-than presenting more vocabulary to the user.
+**Idiomatic** - Use's Clojure's [Lazy Sequences][laziness] to represent streams
+of values and encourages use of core libraries sequence manipulation functions
+rather than presenting more vocabulary to the user.  Learn a simple *grammar*
+not a stack of *nouns* and *verbs*.
 
 **Simple** - pattern/event definition and playback decomplected.
 
-**Easy** - get started quickly when using Overtone, Pink, MIDI, or OSC messages to render output.
-
+**Easy** - get started quickly when using Overtone, Pink, MIDI, or OSC messages
+to render output.
 
 Clojure provides a great many functions for the manipulation of sequences and
 **patrn** encourages the user to leverage their power where possible.
@@ -75,4 +76,4 @@ The project uses [Midje][midje] for testing. `lein midje` will run all tests.
 [sc-pattern]: http://doc.sccode.org/Tutorials/A-Practical-Guide/PG_01_Introduction.html 
 [midje]: https://github.com/marick/Midje/
 [flatten]: https://mwfogleman.github.io/posts/20-12-2014-flatcat.html "A few implementations of flatten"
-
+[laziness]: http://clojure-doc.org/articles/language/laziness.html "Laziness in Clojure"
