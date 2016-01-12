@@ -5,18 +5,14 @@ learn as little as possible library specific vocabulary.
 
 ## Philosophy
 
-**Declarative** - say *what* will occur not *how* it will happen.
-
-**Grammatical** - Learn a simple *grammar* not a stack of new *nouns* and
+* **Declarative** - say *what* will occur not *how* it will happen.
+* **Grammatical** - learn a simple *grammar* not a stack of new *nouns* and
 *verbs*.
-
-**Idiomatic** - Uses Clojure's [Lazy Sequences][laziness] to represent streams
+* **Idiomatic** - uses Clojure's [Lazy Sequences][laziness] to represent streams
 of values and encourages use of core libraries sequence manipulation functions
 rather than presenting more vocabulary to the user.  
-
-**Simple** - pattern/event definition and playback decomplected.
-
-**Easy** - get started quickly when using Overtone, Pink, MIDI, or OSC messages
+* **Simple** - pattern/event definition and playback decomplected.
+* **Easy** - get started quickly when using Overtone, Pink, MIDI, or OSC messages
 to render output.
 
 # Usage
