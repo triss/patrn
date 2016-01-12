@@ -15,8 +15,6 @@
   (at (metronome (+ time-stamp (or length 1))) 
       (ctl synth :gate 0)))
 
-(defn pp [x] (pprint/pprint x) x)
-
 (defn play-derived-event
   "Plays a single event with Overtone instrument specified within it."
   [{:keys [instrument metronome time-stamp] :as event}]
