@@ -25,7 +25,8 @@
             used-params ((apply juxt inst-params) event)
             synth       (apply instrument used-params)]
         (when (#{:gate} inst-params)
-          (close-synth-gate synth event)))))
+          (close-synth-gate synth event))
+        synth)))
 
 (def default-metronome (metronome 60))
 
@@ -33,30 +34,33 @@
   "Provides default set of event value derivations for use with Overtone."
   (assoc event/default-event :metronome default-metronome))
 
-(defn derive-event-vals
-  "Derive an events values."
-  [event] (event/derive-vals (merge base-event event)))
-
 (def play-event
   "Helper method for playing overtone event maps."
-  (comp play-derived-event derive-event-vals))
+  (comp play-derived-event 
+        event/derive-vals
+        #(merge base-event %)))
 
-(defn time-stamp-first-events
-  [events] 
-  (let [{:keys [time-stamp duration metronome]
-         :or   {metronome default-metronome, 
-                time-stamp (default-metronome)}} (first events)
-        stamp (fn [e t] (update e :time-stamp #(or % t)))] 
-    (conj (drop 2 events) 
-          (stamp (second events) (+ time-stamp duration)) 
-          (stamp (first events)  time-stamp))))
+(defn ensure-time-stamped
+  "Ensures event has a time stamp. 
+  If not present uses next beat on specified or default metronome."
+  [{:keys [time-stamp metronome] :as event}] 
+  (let [ts (or time-stamp (if metronome (metronome) (default-metronome)))] 
+    (assoc event :time-stamp ts)))
 
-(declare play)
+(defn time-stamp-events
+  [events]
+  (->> events
+       (reductions (fn [prev-ts {:keys [time-stamp duration] 
+                                 :or   {duration 1}}] 
+                     (or time-stamp (+ prev-ts duration))))
+       (map #(assoc %1 :time-stamp %2) events)))
 
 (defn schedule 
   [[fst & more]]
   (play-event fst)
   (when (seq more)
-    (apply-by (:time-stamp (first more)) play [more])))
+    (apply-by (:time-stamp (first more)) schedule [more])))
 
-(def play (comp schedule time-stamp-first-events))
+(def play (comp schedule 
+                time-stamp-events 
+                #(cons (ensure-time-stamped (first %)) (rest %))))
