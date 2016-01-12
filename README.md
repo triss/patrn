@@ -3,22 +3,21 @@
 Pattern][sc-pattern] system to Clojure whilst requiring the programmer to
 learn as little as possible library specific vocabulary. 
 
-## Philosphy
+## Philosophy
 
 **Declarative** - say *what* will occur not *how* it will happen.
 
-**Idiomatic** - Use's Clojure's [Lazy Sequences][laziness] to represent streams
+**Grammatical** - Learn a simple *grammar* not a stack of new *nouns* and
+*verbs*.
+
+**Idiomatic** - Uses Clojure's [Lazy Sequences][laziness] to represent streams
 of values and encourages use of core libraries sequence manipulation functions
-rather than presenting more vocabulary to the user.  Learn a simple *grammar*
-not a stack of *nouns* and *verbs*.
+rather than presenting more vocabulary to the user.  
 
 **Simple** - pattern/event definition and playback decomplected.
 
 **Easy** - get started quickly when using Overtone, Pink, MIDI, or OSC messages
 to render output.
-
-Clojure provides a great many functions for the manipulation of sequences and
-**patrn** encourages the user to leverage their power where possible.
 
 # Usage
 
