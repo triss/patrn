@@ -39,7 +39,7 @@
       (* duration legato stretch))
     ))
 
-(defn resolve-value
+(defn derive-val
   "Takes an event a key value pair, when the value is a function it is applied
   to the event, if it's an atom is dereferenced and if its some other value its
   left as it is. After this the transformed value is associated with the key in
@@ -51,6 +51,6 @@
            (instance? #?(:cljs Atom :clj clojure.lang.Atom) v) @v
            :else v)))
 
-(defn resolve-values
+(defn derive-vals
   "Resolve all the values in the event."
-  [event] (reduce resolve-value event event))
+  [event] (reduce derive-val event event))

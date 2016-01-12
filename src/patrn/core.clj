@@ -15,7 +15,8 @@
        :else              (cons x (patrn->seq more))))))
 
 (defn flop-map 
-  "Turns a map of sequences in to a sequence of maps."
+  "Turns a map of sequences in to a sequence of maps containing one of every
+  value in its sequences until one of the contained sequences finishes."
   [m] (lazy-seq 
        (let [mapm #(zipmap (keys m) (map % (vals m)))] 
          (when (every? seq (vals m)) 
@@ -30,7 +31,10 @@
        (zipmap (keys bindings))
        flop-map))
 
-(def bicycle (comp bind #(zipmap (keys %) (map cycle (vals %)))))
+(defn cycle-vals 
+  [m] (zipmap (keys m) (map (comp cycle vector) (vals m))))
+
+(def bicycle (comp bind cycle-vals))
 
 ;;;; helper patterns
 
