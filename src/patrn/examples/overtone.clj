@@ -5,69 +5,61 @@
             [patrn.overtone :refer [play-event play]])
   (:use [overtone.core]))
 
-(defn pn [x] (pprint x) x)
-
-;(defn fn-map 
-;  [g]
-;  (fn [f a b]
-;    (apply map f (if (< (count a) (count b))
-;                   [a (g b)] 
-;                   [(g a) b]))))
-;
-;(def mapc 
-;  "Takes two sequences, cycles or repeats the shorter and maps f over them.
-;  Simulates functionality of standard wrapped array opeartor application in
-;  SuperCollider."
-;  (fn-map p/cycle-or-repeat))
-;
-;(defn mapf
-;  "cycles forth and back through sequence from start to finish."
-;  [x] (if (sequential? x) 
-;        (cycle (concat x (reverse x)))
-;        (repeat x)))
-;
-;(def fold-map (fn-map fold-seq))
-;
-;(defn mapx 
-;  [f as bs] (for [a as b bs] (f a b)))
+(defn pp [x] (pprint x) x)
 
 (comment
   (connect-external-server "192.168.0.10" 57110)
 
-  ;; Overtone lets you define instruments...
-  (definst smooth 
-    [freq 440 amp 0.5 length 1]
-    (* (env-gen (perc 0.01 length amp) 
-                :action FREE)
-       (sin-osc freq)))
+  ;; Overtone lets you define instruments
+  (definst perc-sine 
+    [freq 440 amp 0.5 length 1 pan 0]
+    (pan2 (* (env-gen (perc 0.01 length) 
+                      :action FREE)
+             (sin-osc freq))
+          pan amp))
 
   ;; and play them back like so
-  (smooth 123)
+  (perc-sine 123)
 
-  ;; patrn let's you construct event maps and play them back.
-  (play-event {:instrument smooth})
+  ;; Overtone can also create gated instruments 
+  (definst gated-sine
+    [freq 440 amp 0.5 gate 1 attack 0.01 decay 0.1 sustain 0.5 release 0.1 pan 0]
+    (pan2 (* (env-gen (adsr attack decay sustain release) 
+                      gate :action FREE)
+             (sin-osc freq))
+          pan amp))
+
+  ;; which are triggered similarily but need there gate closed to stop
+  (def g (gated-sine 123))
+  (ctl g :gate 0)
+
+  ;; patrn's play-event handles gating for you
+  (play-event {:instrument perc-sine})
+  (play-event {:instrument gated-sine})
 
   ;; paramater values are assumed where possible unless specified.
-  (play-event {:instrument smooth 
+  (play-event {:instrument gated-sine 
                :freq 1000
                :length 5})
 
   ;; you can use pre-specified event key derivation
   ;; for example degree -> freq for our instrument here
-  (play-event {:instrument smooth
-               :degree 1})
+  (play-event {:instrument perc-sine :degree 0})
+  (play-event {:instrument perc-sine :degree 4})
 
   (def pattern 
-    (p/bicycle {:instrument smooth 
+    (p/bicycle {:instrument perc-sine 
                 :amp        [1/2 1/3 1/4 1/8]
                 :duration   (map #(/ % 4) [2 3 3])
                 :degree     (shuffle (range 1 12))
                 :octave     [4 5 6 5]}))
 
-  (play pattern)
+  (def player (play pattern))
 
-  (def a (p/bind {:instrument smooth 
-                  :amp 1
+  (kill-player player) 
+
+  (def a (p/bind {:instrument perc-sine 
+                  :amp 0.5
                   :octave 7
                   :degree   [0   0   4   4   5   5   4]
                   :duration [1/2 1/2 1/2 1/2 1/2 1/2 1]}))
@@ -75,9 +67,6 @@
   (play a)
 
   ;; get patterns length
-  (->> (map :duration pattern)
-       (reductions +)
-       (map #(assoc %1 :time-stamp %2) pattern))
 
   (defn slide 
     [repeats len step start coll]
@@ -138,28 +127,16 @@
   (defn odds-then-evens 
     [coll] (let [{evens true odds false} (group-by even? coll)] [odds evens]))
 
-  (pn (->> (lace [[1 2 3] 4 5 6 [7 8] (shuffler 1 20 3)])
+  (pp (->> (lace [[1 2 3] 4 5 6 [7 8] (shuffler 1 20 3)])
            (repeat 8)
            p/stream
            (partition 8)
            (map odds-then-evens)
            (filter (fn [[a b]] (not= (count a) (count b))))))
 
-  (pn (map odds-then-evens (partition 8 (p/stream))))
+  (pn (map odds-then-evens (partition 8 (p/stream)))) 
 
-  (definst default-inst
-    [freq 440 amp 0.5 gate 1 attack 0.01 decay 0.1 sustain 0.1 release 0.1 pan 0]
-    (pan2 (* (env-gen (adsr attack decay sustain release amp) 
-                      gate :action FREE)
-             (sin-osc freq))
-          pan))
-
-  (def s (default-inst))
-
-  (ctl s :release 10 :gate 0)
-
-  (kill 68)
-  (p/stream (repeat 3 (lace [1 [1 2] 2 3 [4 5 6]])))
+  (p/patrn->seq (repeat 3 (lace [1 [1 2] 2 3 [4 5 6]])))
 
   (def first-binding 
     (p/bind {:detune   #{0 1 3}
@@ -169,7 +146,7 @@
              :duration (cycle [2 2 2 2 4 4 8])
              :legato   (cycle [2 1/2 3/4 1/2 1/4])}))
 
-  ;; TODO: multichannel expand sets #{}}
+;; TODO: multichannel expand sets #{}}
   (def first-cycle-ride 
     (p/bicycle {:detune   #{0 1 3}
                 :freq     (repeat (* 4 5 7) (range 100 1100 100))
@@ -178,8 +155,8 @@
                 :duration [2 2 2 2 4 4 8]
                 :legato   [2 1/2 3/4 1/2 1/4]}))
 
-  ;; TODO: possible reordering of function dependancies.
-  ;; ordered-map could support via assoc/dissoc process
+;; TODO: possible reordering of function dependancies.
+;; ordered-map could support via assoc/dissoc process
   (def interdependant-values
     (p/bind {:stretch-lin (take 8 (cycle [0 0.1 0.2 1]))
              :stretch     #(lin->exp 0 1 1 0.125 (:stretch-lin %))
@@ -190,12 +167,12 @@
              :detune      #(rand 3)
              :duration    0.2}))
 
-  ;; TODO: could produce 1 arity fn that uses time-stamp
+;; TODO: could produce 1 arity fn that uses time-stamp
   (def time-based-patterns
     (p/bind {:scale (p/step [:diatonic :aeolian] 5)
              :db    (p/envelope [-2 -30 -25 -30] 0.4)}))
 
-  ;; TODO: would be stateful walk brownian motion gen
+;; TODO: would be stateful walk brownian motion gen
   (def stutter-walk 
     (p/bind {:degree    (p/brown 0 6 1)
              :transpose #(rand-nth [:rest (repeat (rand 5) 0)])
