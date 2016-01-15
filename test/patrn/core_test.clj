@@ -2,6 +2,17 @@
   (:use midje.sweet)
   (:use [patrn.core]))
 
+(facts "about `untangle`"
+       (fact "untangles vectors" 
+             (untangle [[:a :b :c] [[1 2 3] [4 5 6]]])
+             => {:a (1 4), :b (2 5), :c (3 6)})
+       (fact "untangles sets" 
+             (untangle [#{:a :b :c} [#{1 2 3} #{4 5 6}]])
+             => {:a (1 4), :b (2 5), :c (3 6)})
+       (fact "keeps only enough values for each specified key."
+             (untangle [[:a :b] [[1 2 3] [4 5 6]]])
+             => {:a (1 4), :b (2 5)}))
+
 (def map-of-seqs {:a [1 2 3] :b [1 2 3] :c [1 2 3]})
 (def map-of-seqs-a-short {:a [1 2] :b [1 2 3] :c [1 2 3]})
 

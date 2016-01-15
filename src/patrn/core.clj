@@ -22,6 +22,18 @@
          (when (every? seq (vals m)) 
            (cons (mapm first) (flop-map (mapm rest)))))))
 
+(defn untangle
+  [[ks xs]] 
+  (let [maps (map #(zipmap ks %) xs)] 
+    (zipmap ks (for [k ks] (map k maps)))))
+
+(defn untangle-bindings
+  [bindings]
+  (merge bindings 
+         (->> bindings 
+              (filter #(coll? first %))
+              (map untangle))))
+
 (defn bind 
   "Combines map of patrns in to one sequence of maps."
   [bindings]
@@ -29,12 +41,22 @@
        (map #(if (sequential? %) % (repeat %)))
        (map patrn->seq)
        (zipmap (keys bindings))
+       (untangle-bindings)
        flop-map))
 
 (defn cycle-vals 
   [m] (zipmap (keys m) (map (comp cycle vector) (vals m))))
 
 (def bicycle (comp bind cycle-vals))
+
+(defn time-stamp-events
+  "Calculate time-stamp for each event in sequence if not already specified."
+  [events]
+  (->> (reductions (fn [prev-ts {:keys [time-stamp duration] 
+                                 :or   {duration 1}}] 
+                     (or time-stamp (+ prev-ts duration)))
+                   0 events)
+       (map #(assoc %1 :time-stamp %2) events)))
 
 ;;;; helper patterns
 
