@@ -4,14 +4,11 @@
 
 (facts "about `untangle`"
        (fact "untangles vectors" 
-             (untangle [[:a :b :c] [[1 2 3] [4 5 6]]])
-             => {:a (1 4), :b (2 5), :c (3 6)})
-       (fact "untangles sets" 
-             (untangle [#{:a :b :c} [#{1 2 3} #{4 5 6}]])
-             => {:a (1 4), :b (2 5), :c (3 6)})
+             (untangle [:a :b :c] [[1 2 3] [4 5 6]])
+             => {:a '(1 4), :b '(2 5), :c '(3 6)})
        (fact "keeps only enough values for each specified key."
-             (untangle [[:a :b] [[1 2 3] [4 5 6]]])
-             => {:a (1 4), :b (2 5)}))
+             (untangle [:a :b] [[1 2 3] [4 5 6]])
+             => {:a '(1 4), :b '(2 5)}))
 
 (def map-of-seqs {:a [1 2 3] :b [1 2 3] :c [1 2 3]})
 (def map-of-seqs-a-short {:a [1 2] :b [1 2 3] :c [1 2 3]})
@@ -24,6 +21,19 @@
              (count (flop-map map-of-seqs-a-short)) => 2)
        (fact "first out contains first values of sequences."
              (first (flop-map map-of-seqs))     => {:a 1 :b 1 :c 1}))
+
+(facts "about `bind`"
+       (fact "needs one sequence specified else infinite." 
+             (bind {:a [1] :b 2}) 
+             => '({:a 1 :b 2}))
+
+       (fact "event seq only as long as shortest seq."
+             (bind {:a [1 2] :b 3}) 
+             => '({:a 1 :b 3} {:a 2 :b 3}))
+
+       (fact "untangles tangled seqs"
+             (bind {[:a :b] [[1 2] [3 4]], :c 5})
+             => '({:a 1 :b 2 :c 5} {:a 3 :b 4 :c 5})))
 
 (facts "about `patrn->seq`"
        (fact "does nothing to sequence of atomic values."
