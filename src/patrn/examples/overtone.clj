@@ -1,9 +1,9 @@
 (ns patrn.examples.overtone
   (:require [clojure.pprint :refer [pprint]]
             [patrn.core :as p]
-            [patrn.event :as event]
+            [patrn.musical-event :as event]
             [patrn.overtone :refer [play-event play]])
-  (:use [overtone.core]))
+  (:use [overtone.live]))
 
 (defn pp [x] (pprint x) x)
 
@@ -19,7 +19,7 @@
           pan amp))
 
   ;; and play them back like so
-  (perc-sine 123)
+  (perc-sine 1230)
 
   ;; Overtone can also create gated instruments 
   (definst gated-sine
@@ -38,7 +38,7 @@
   (play-event {:instrument gated-sine})
 
   ;; paramater values are assumed where possible unless specified.
-  (play-event {:instrument gated-sine 
+  (play-event {:instrument gated-sine
                :freq 1000
                :length 5})
 
@@ -47,8 +47,8 @@
   (play-event {:instrument perc-sine :degree 0})
   (play-event {:instrument perc-sine :degree 4})
 
-  (def pattern 
-    (p/bicycle {:instrument perc-sine 
+  (def pattern
+    (p/bicycle {:instrument perc-sine
                 :amp        [1/2 1/3 1/4 1/8]
                 :duration   (map #(/ % 4) [2 3 3])
                 :degree     (shuffle (range 1 12))
@@ -56,16 +56,15 @@
 
   (def player (play pattern))
 
-  (kill-player player) 
+  (kill-player player)
 
-  (def a (p/bind {:instrument perc-sine 
+  (def a (p/bind {:instrument perc-sine
                   :amp 0.5
                   :octave 7
                   :degree   [0   0   4   4   5   5   4]
                   :duration [1/2 1/2 1/2 1/2 1/2 1/2 1]}))
 
   (play a)
-
   ;; get patterns length
 
   (defn slide 
@@ -75,13 +74,14 @@
          (take repeats)))
 
   (def a-flock-of-sea-gulls 
-    (p/bind {:degree   (->> (range -6 12 2) 
+    (p/bind {:instrument perc-sine
+             :degree   (->> (range -6 12 2)
                             (partition-all 3 1) 
                             (take 8)) 
              :duration (cycle [0.1 0.1 0.2])
              :length   0.15}))
 
-  (play a-flock-of-sea-gulls m (m))
+  (play a-flock-of-sea-gulls)
 
   (def prand
     (p/bind {:degree   #(rand-nth (range 6))
@@ -138,7 +138,7 @@
 
   (p/patrn->seq (repeat 3 (lace [1 [1 2] 2 3 [4 5 6]])))
 
-  (def first-binding 
+  (def first-binding
     (p/bind {:detune   #{0 1 3}
              :freq     (repeat (* 4 5 7) (range 100 1100 100))
              :db       (cycle [-20 -40 -30 -40])
@@ -173,13 +173,13 @@
              :db    (p/envelope [-2 -30 -25 -30] 0.4)}))
 
 ;; TODO: would be stateful walk brownian motion gen
-  (def stutter-walk 
+  (def stutter-walk
     (p/bind {:degree    (p/brown 0 6 1)
              :transpose #(rand-nth [:rest (repeat (rand 5) 0)])
              :duration  0.2
              :octave    6}))
 
-  (def chord 
+  (def chord
     (p/bind {:degree    #{0 2 4}
              :transpose (p/brown 0 6 1)
              :duration  0.4
