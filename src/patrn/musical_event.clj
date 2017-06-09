@@ -1,4 +1,4 @@
-(ns patrn.event
+(ns patrn.musical-event
   (:require [flatland.ordered.map :refer [ordered-map]]
             [music.pitch :refer [nth-interval midi->hz db->amp]]))
 
@@ -9,18 +9,18 @@
     :scale  :diatonic
     :degree 0
 
-    :note      
+    :note
     (fn [{:keys [root scale degree]}] 
       (+ root (nth-interval scale degree)))
 
     :octave    5
     :transpose 0
 
-    :midi-note 
+    :midi-note
     (fn [{:keys [note octave transpose]}]
       (+ transpose note (* octave 12)))
 
-    :freq      
+    :freq
     (fn [e] (midi->hz (:midi-note e)))
 
     ;; amp stuff
@@ -48,7 +48,7 @@
   (assoc event k 
          (cond 
            (fn? v) (v event)
-           (instance? #?(:cljs Atom :clj clojure.lang.Atom) v) @v
+           (instance? clojure.lang.Atom v) @v
            :else v)))
 
 (defn derive-vals
